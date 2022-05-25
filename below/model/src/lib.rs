@@ -27,6 +27,7 @@ pub mod collector_plugin;
 #[cfg(test)]
 mod common_field_ids;
 pub mod network;
+pub mod perf_event;
 pub mod process;
 pub mod sample;
 mod sample_model;
@@ -44,6 +45,7 @@ pub use open_source::*;
 pub use cgroup::*;
 pub use collector::*;
 pub use network::*;
+pub use perf_event::*;
 pub use process::*;
 pub use sample::*;
 pub use system::*;
@@ -61,6 +63,7 @@ pub enum Field {
     Str(String),
     PidState(procfs::PidState),
     VecU32(Vec<u32>),
+    BTreeMap(BTreeMap<String, u64>),
 }
 
 impl From<Field> for u64 {
@@ -166,6 +169,11 @@ impl From<Vec<u32>> for Field {
         Field::VecU32(v)
     }
 }
+impl From<BTreeMap<String, u64>> for Field {
+    fn from(m: BTreeMap<String, u64>) -> Self {
+        Field::BTreeMap(m)
+    }
+}
 
 impl<T: Into<Field> + Clone> From<&T> for Field {
     fn from(v: &T) -> Self {
@@ -185,6 +193,7 @@ impl std::ops::Add for Field {
             (Field::F32(s), Field::F32(o)) => (s + o).into(),
             (Field::F64(s), Field::F64(o)) => (s + o).into(),
             (Field::Str(s), Field::Str(o)) => (s + &o).into(),
+            (Field::BTreeMap(s), Field::BTreeMap(_o)) => s.into(), //s.append(&mut o.clone()).into(),
             _ => panic!("Operation for unsupported types"),
         }
     }
@@ -202,6 +211,7 @@ impl PartialEq for Field {
             (Field::Str(s), Field::Str(o)) => s == o,
             (Field::PidState(s), Field::PidState(o)) => s == o,
             (Field::VecU32(s), Field::VecU32(o)) => s == o,
+            (Field::BTreeMap(s), Field::BTreeMap(o)) => s == o,
             _ => false,
         }
     }
@@ -219,6 +229,7 @@ impl PartialOrd for Field {
             (Field::Str(s), Field::Str(o)) => s.partial_cmp(o),
             (Field::PidState(s), Field::PidState(o)) => s.partial_cmp(o),
             (Field::VecU32(s), Field::VecU32(o)) => s.partial_cmp(o),
+            (Field::BTreeMap(s), Field::BTreeMap(o)) => s.partial_cmp(o),
             _ => None,
         }
     }
@@ -236,6 +247,7 @@ impl fmt::Display for Field {
             Field::Str(v) => v.fmt(f),
             Field::PidState(v) => v.fmt(f),
             Field::VecU32(v) => f.write_fmt(format_args!("{:?}", v)),
+            Field::BTreeMap(v) => f.write_fmt(format_args!("{:?}", v)),
         }
     }
 }
@@ -259,7 +271,11 @@ pub fn sort_queriables<T: Queriable>(queriables: &mut [&T], field_id: &T::FieldI
             .query(field_id)
             .partial_cmp(&rhs.query(field_id))
             .unwrap_or(std::cmp::Ordering::Equal);
-        if reverse { order.reverse() } else { order }
+        if reverse {
+            order.reverse()
+        } else {
+            order
+        }
     });
 }
 

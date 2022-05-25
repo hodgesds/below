@@ -36,6 +36,9 @@ pub struct SingleCgroupModel {
     pub io_total: Option<CgroupIoModel>,
     #[queriable(subquery)]
     pub pressure: Option<CgroupPressureModel>,
+    #[queriable(subquery)]
+    #[queriable(preferred_name = perf)]
+    pub perf: Option<CgroupPerfEventModel>,
 }
 
 /// A model that represents a cgroup subtree. Each instance is a node that uses
@@ -221,6 +224,7 @@ impl CgroupModel {
             .as_ref()
             .map(|p| CgroupPressureModel::new(p));
 
+        let perf = Some(CgroupPerfEventModel::new());
         // recursively calculate view of children
         // `children` is optional, but we treat it the same as an empty map
         let empty = BTreeMap::new();
@@ -257,6 +261,7 @@ impl CgroupModel {
                 io_total,
                 pressure,
                 depth,
+                perf,
             },
             children,
             count: nr_descendants + 1,
@@ -608,6 +613,31 @@ impl CgroupPressureModel {
             memory_full_pct: pressure.memory.full.avg10,
         }
     }
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize, below_derive::Queriable)]
+pub struct CgroupPerfEventModel {
+    #[queriable(subquery)]
+    pub events: Option<PerfEventModel>,
+}
+
+impl CgroupPerfEventModel {
+    fn new() -> CgroupPerfEventModel {
+        CgroupPerfEventModel {
+            //events: BTreeMap::from([
+            //    ("foo".to_string(), 123),
+            //    ("bar".to_string(), 123),
+            //    ("baz".to_string(), 555),
+            //]),
+            events: Some(PerfEventModel::new()),
+        }
+    }
+
+    //fn new() -> CgroupPerfEventModel {
+    //    CgroupPerfEventModel {
+    //        events: PerfEventModel::new(),
+    //    }
+    //}
 }
 
 #[cfg(test)]

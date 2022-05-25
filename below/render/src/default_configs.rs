@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use super::*;
+use model::perf_event::SinglePerfEventModel;
 
 use RenderFormat::{
     MaxOrReadableSize, PageReadableSize, Precision, ReadableSize, SectorReadableSize,
@@ -33,6 +34,7 @@ impl HasRenderConfig for model::SingleCgroupModel {
             }
             Mem(field_id) => model::CgroupMemoryModel::get_render_config_builder(field_id),
             Pressure(field_id) => model::CgroupPressureModel::get_render_config_builder(field_id),
+            Perf(field_id) => model::CgroupPerfEventModel::get_render_config_builder(field_id),
         }
     }
 }
@@ -51,6 +53,37 @@ impl HasRenderConfig for model::CgroupCpuModel {
         }
     }
 }
+
+impl HasRenderConfig for model::CgroupPerfEventModel {
+    fn get_render_config_builder(field_id: &Self::FieldId) -> RenderConfigBuilder {
+        use model::CgroupPerfEventModelFieldId::*;
+        let rc = RenderConfigBuilder::new();
+        match field_id {
+            field => rc.title("foo").suffix("%").format(Precision(2)),
+        }
+    }
+}
+
+//impl HasRenderConfig for model::CgroupPerfEventModel {
+//fn get_render_config_builder(field_id: &Self::FieldId) -> RenderConfigBuilder {
+//use model::CgroupPerfEventModelFieldId::*;
+//let rc = RenderConfigBuilder::new();
+// Events => {
+//     for (event, value) in &Events {
+//         rc.title(event).suffix("%").format(Precision(2));
+//     }
+// }
+
+//Events => rc.title("Perf Event").suffix("%").format(Precision(2)),
+
+//match field_id {}
+
+//match field_id {
+//    //Events => model::CgroupPerfModel::get_render_config_builder(field_id),
+//    Events => rc.title("Perf Event").suffix("%").format(Precision(2)),
+//}
+//    }
+//}
 
 impl HasRenderConfig for model::CgroupIoModel {
     fn get_render_config_builder(field_id: &Self::FieldId) -> RenderConfigBuilder {

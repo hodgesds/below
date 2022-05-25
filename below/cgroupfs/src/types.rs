@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct CpuStat {
@@ -109,4 +110,9 @@ pub struct MemoryEvents {
     pub max: Option<u64>,
     pub oom: Option<u64>,
     pub oom_kill: Option<u64>,
+}
+
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
+pub struct PerfEvents {
+    pub events: HashMap<String, u64>,
 }

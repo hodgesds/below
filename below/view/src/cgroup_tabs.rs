@@ -213,10 +213,12 @@ pub mod default_tabs {
         ThpCollapseAlloc, ThpFaultAlloc, Total, Unevictable, WorkingsetActivate,
         WorkingsetNodereclaim, WorkingsetRefault,
     };
+    use model::CgroupPerfEventModelFieldId::Events;
     use model::CgroupPressureModelFieldId::{
         CpuFullPct, CpuSomePct, IoFullPct, IoSomePct, MemoryFullPct, MemorySomePct,
     };
-    use model::SingleCgroupModelFieldId::{Cpu, Io, Mem, Name, Pressure};
+    use model::PerfEventModelFieldId::Events as PerfEvents;
+    use model::SingleCgroupModelFieldId::{Cpu, Io, Mem, Name, Perf, Pressure};
 
     use once_cell::sync::Lazy;
 
@@ -316,4 +318,7 @@ pub mod default_tabs {
             ViewItem::from_default(Pressure(IoFullPct)),
         ])
     });
+
+    pub static CGROUP_PERF_TAB: Lazy<CgroupTab> =
+        Lazy::new(|| CgroupTab::new(vec![ViewItem::from_default(Perf(Events(PerfEvents)))]));
 }

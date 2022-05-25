@@ -15,7 +15,7 @@
 use super::*;
 
 use crate::MainViewState;
-use cursive::views::{NamedView, OnEventView, ResizedView, StackView};
+use cursive::views::{ListView, NamedView, OnEventView, ResizedView, StackView};
 
 // Invoke command palette
 make_event_controller!(
@@ -435,5 +435,29 @@ make_event_controller!(
             Err(e) => StatsView::<T>::get_view(c).get_cmd_palette().set_alert(e),
         };
         StatsView::<T>::refresh_myself(c);
+    }
+);
+
+// Invoke Perf event View
+make_event_controller!(
+    PerfView,
+    "perf",
+    "",
+    Event::Char('e'),
+    |_view: &mut StatsView<T>, _cmd_vec: &[&str]| {},
+    |c: &mut Cursive, _cmd_vec: &[&str]| {
+        let event_map = c
+            .user_data::<ViewState>()
+            .expect("No data stored in Cursive object!")
+            .event_controllers
+            .clone();
+        c.add_fullscreen_layer(ResizedView::with_full_screen(
+            OnEventView::new(crate::perf_event_menu::new(event_map)).on_event(
+                EventTrigger::from('e').or('r'),
+                |c| {
+                    c.pop_layer();
+                },
+            ),
+        ))
     }
 );

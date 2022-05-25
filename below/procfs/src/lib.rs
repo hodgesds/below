@@ -35,6 +35,7 @@ mod test;
 
 pub const NET_SYSFS: &str = "/sys/class/net/";
 pub const NET_PROCFS: &str = "/proc/net";
+pub const PERF_DEBUGFS: &str = "/sys/kernel/debug";
 
 lazy_static! {
     /// The number of microseconds per clock tick

@@ -88,6 +88,7 @@ mod core_view;
 mod default_styles;
 mod filter_popup;
 mod help_menu;
+mod perf_event_menu;
 mod process_tabs;
 mod process_view;
 mod render;

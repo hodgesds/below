@@ -86,6 +86,7 @@ fn get_description(controller: &Controllers) -> &'static str {
         Controllers::NextPage => "scroll down 15 lines primary display.",
         Controllers::PrevPage => "scroll up 15 lines primary display.",
         Controllers::Url => "Show Corresponding Below Web URL",
+        Controllers::Perf => "Show Perf events",
         _ => "Unknown",
     }
 }
@@ -162,6 +163,7 @@ fn fill_controllers(
         cmd_map.get(&Controllers::System).unwrap().to_string(),
         cmd_map.get(&Controllers::NextPage).unwrap().to_string(),
         cmd_map.get(&Controllers::PrevPage).unwrap().to_string(),
+        cmd_map.get(&Controllers::Perf).unwrap().to_string(),
     ];
 
     controllers.extend(crate::get_extra_controller_str(&cmd_map));

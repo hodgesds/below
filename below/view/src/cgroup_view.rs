@@ -23,7 +23,8 @@ use cursive::Cursive;
 
 use crate::cgroup_tabs::{
     default_tabs::{
-        CGROUP_CPU_TAB, CGROUP_GENERAL_TAB, CGROUP_IO_TAB, CGROUP_MEM_TAB, CGROUP_PRESSURE_TAB,
+        CGROUP_CPU_TAB, CGROUP_GENERAL_TAB, CGROUP_IO_TAB, CGROUP_MEM_TAB, CGROUP_PERF_TAB,
+        CGROUP_PRESSURE_TAB,
     },
     CgroupTab,
 };
@@ -110,6 +111,7 @@ impl StateCommon for CgroupState {
         sort_tags.insert("Mem".into(), &*CGROUP_MEM_TAB);
         sort_tags.insert("I/O".into(), &*CGROUP_IO_TAB);
         sort_tags.insert("Pressure".into(), &*CGROUP_PRESSURE_TAB);
+        sort_tags.insert("Perf".into(), &*CGROUP_PERF_TAB);
         Self {
             collapsed_cgroups: Rc::new(RefCell::new(HashSet::new())),
             current_selected_cgroup: "<root>".into(),
@@ -197,6 +199,7 @@ impl CgroupView {
             "Mem".into(),
             "I/O".into(),
             "Pressure".into(),
+            "Perf".into(),
         ];
         let mut tabs_map: HashMap<String, CgroupView> = HashMap::new();
         tabs_map.insert(
@@ -227,6 +230,12 @@ impl CgroupView {
             "Pressure".into(),
             CgroupView {
                 tab: &*CGROUP_PRESSURE_TAB,
+            },
+        );
+        tabs_map.insert(
+            "Perf".into(),
+            CgroupView {
+                tab: &*CGROUP_PERF_TAB,
             },
         );
         let user_data = c

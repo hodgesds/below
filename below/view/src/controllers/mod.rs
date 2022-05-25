@@ -128,4 +128,5 @@ make_controllers!(
     NextPage: NextPageImpl,
     PrevPage: PrevPageImpl,
     Url: URLPopup,
+    Perf: PerfView,
 );

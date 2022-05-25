@@ -42,6 +42,8 @@ pub enum Error {
     NotCgroup2(PathBuf),
     #[error("Pressure metrics not supported: {0:?}")]
     PressureNotSupported(PathBuf),
+    #[error("Perf event not supported: {0:?}")]
+    PerfEventNotSupported(String),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
